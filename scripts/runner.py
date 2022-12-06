@@ -53,7 +53,15 @@ if __name__ == '__main__':
         exit(1) 
     
     if args.cfg[-3:] == ".py":
-        config = Configurator(args.cfg, overwrite_output_dir=args.outputdir)
+        #config = Configurator(args.cfg, overwrite_output_dir=args.outputdir)
+        logging.info(f"cfg abs path: {os.path.abspath(args.cfg)}")
+        PATH_TO_MODULE = os.path.dirname(os.path.abspath(args.cfg))
+        if not PATH_TO_MODULE in sys.path:
+            logging.info(f"appending module path: {os.path.dirname(os.path.abspath(args.cfg)}")
+            sys.path.append(PATH_TO_MODULE)
+        logging.info(f"appending local path: {sys.path.append(os.getcwd())}")
+        sys.path.append(os.getcwd())
+        config = Configurator(os.path.abspath(args.cfg), overwrite_output_dir=args.outputdir)
     elif args.cfg[-4:] == ".pkl":
         config = pickle.load(open(args.cfg,"rb"))
     else:
