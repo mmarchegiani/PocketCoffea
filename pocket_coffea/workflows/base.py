@@ -64,6 +64,9 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
         self.custom_axes = []
         self.custom_histogram_fields = {}
 
+        # Custo weights for the histograms
+        self.custom_histogram_weights = {}
+
         # Output format
         # Accumulators for the output
         self.output_format = {
@@ -396,8 +399,8 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
         histogram configuration to add customizations directly to the histogram
         objects before the filling.
 
-        This function should also be redefined to fill the `self.custom_histogram_fields`
-        that are passed to the histogram filling.
+        This function should also be redefined to fill the `self.custom_histogram_fields` and
+        `self.custom_histogram_weights` that are passed to the histogram filling.
         '''
         pass
 
@@ -414,6 +417,7 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
             subsamples=self._subsamples[self._sample],
             shape_variation=variation,
             custom_fields=self.custom_histogram_fields,
+            custom_weight=self.custom_histogram_weights,
         )
         # Saving the output
         for subs in self._subsamples[self._sample].keys():
