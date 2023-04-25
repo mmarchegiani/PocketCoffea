@@ -4,6 +4,8 @@ import copy
 
 from .base import BaseProcessorABC
 from ..utils.configurator import Configurator
+from ..parameters.lumi import goldenJSON
+from ..parameters.btag import btag
 
 class genWeightsProcessor(BaseProcessorABC):
     def __init__(self, cfg: Configurator) -> None:
@@ -11,7 +13,8 @@ class genWeightsProcessor(BaseProcessorABC):
         self.output_format = {
             "sum_genweights": {},
             "cutflow": {
-                "initial": {s: 0 for s in self.cfg.datasets}
+                "initial": {s: 0 for s in self.cfg.datasets},
+                "skim": {s: 0 for s in self.cfg.samples}
             }
         }
 
@@ -19,15 +22,15 @@ class genWeightsProcessor(BaseProcessorABC):
         self._dataset = self.events.metadata["dataset"]
         self._sample = self.events.metadata["sample"]
         self._year = self.events.metadata["year"]
+        self._btag = btag[self._year]
         self._isMC = self.events.metadata["isMC"] == "True"
-        if self._isMC:
-            self._xsec = self.events.metadata["xsec"]
 
-        # Check if the user specified any subsamples without performing any operation
-        if self._sample in self._subsamplesCfg:
-            self._hasSubsamples = True
+        if self._isMC:
+            self._era = "MC"
+            self._xsec = self.events.metadata["xsec"]
         else:
-            self._hasSubsamples = False
+            self._era = self.events.metadata["era"]
+            self._goldenJSON = goldenJSON[self._year]
 
     def apply_object_preselection(self, variation):
         pass
@@ -45,7 +48,13 @@ class genWeightsProcessor(BaseProcessorABC):
         self.output['cutflow']['initial'][self._dataset] += self.nEvents_initial
         if self._isMC:
             self.output['sum_genweights'][self._dataset] = ak.sum(self.events.genWeight)
-            if self._hasSubsamples:
-                raise Exception("This processor cannot compute the sum of genweights of subsamples.")
+
+        self.skim_events()
+        if not self.has_events:
+            return self.output
+
+        if self.cfg.save_skimmed_files:
+            self.export_skimmed_chunk()
+            return self.output
 
         return self.output
