@@ -52,8 +52,8 @@ jet_factory = {
             "Summer19UL16APV_V7_MC_L2Relative_AK4PFchs.jec.txt.gz",
             "RegroupedV2_Summer19UL16APV_V7_MC_UncertaintySources_AK4PFchs.junc.txt.gz",
             "Summer19UL16APV_V7_MC_Uncertainty_AK4PFchs.junc.txt.gz",
-            "Summer20UL16_JRV3_MC_PtResolution_AK4PFchs.jr.txt.gz",
-            "Summer20UL16_JRV3_MC_SF_AK4PFchs.jersf.txt.gz",
+            "Summer20UL16APV_JRV3_MC_PtResolution_AK4PFchs.jr.txt.gz",
+            "Summer20UL16APV_JRV3_MC_SF_AK4PFchs.jersf.txt.gz",
         ]
     ),
     "2016_PreVFP_NOJER": jet_factory_factory(
@@ -61,6 +61,39 @@ jet_factory = {
             "Summer19UL16APV_V7_MC_L1FastJet_AK4PFchs.jec.txt.gz",
             "Summer19UL16APV_V7_MC_L2Relative_AK4PFchs.jec.txt.gz",
             "RegroupedV2_Summer19UL16APV_V7_MC_UncertaintySources_AK4PFchs.junc.txt.gz",
+        ]
+    ),
+    "2016_PreVFP_NOJESunc": jet_factory_factory(
+        files=[
+            "Summer19UL16APV_V7_MC_L1FastJet_AK4PFchs.jec.txt.gz",
+            "Summer19UL16APV_V7_MC_L2Relative_AK4PFchs.jec.txt.gz",
+            "Summer20UL16APV_JRV3_MC_PtResolution_AK4PFchs.jr.txt.gz",
+            "Summer20UL16APV_JRV3_MC_SF_AK4PFchs.jersf.txt.gz",
+        ]
+    ),
+    "2016_PostVFP": jet_factory_factory(
+        files=[
+            "Summer19UL16_V7_MC_L1FastJet_AK4PFchs.jec.txt.gz",
+            "Summer19UL16_V7_MC_L2Relative_AK4PFchs.jec.txt.gz",
+            "RegroupedV2_Summer19UL16_V7_MC_UncertaintySources_AK4PFchs.junc.txt.gz",
+            "Summer19UL16_V7_MC_Uncertainty_AK4PFchs.junc.txt.gz",
+            "Summer20UL16_JRV3_MC_PtResolution_AK4PFchs.jr.txt.gz",
+            "Summer20UL16_JRV3_MC_SF_AK4PFchs.jersf.txt.gz",
+        ]
+    ),
+    "2016_PostVFP_NOJER": jet_factory_factory(
+        files=[
+            "Summer19UL16_V7_MC_L1FastJet_AK4PFchs.jec.txt.gz",
+            "Summer19UL16_V7_MC_L2Relative_AK4PFchs.jec.txt.gz",
+            "RegroupedV2_Summer19UL16_V7_MC_UncertaintySources_AK4PFchs.junc.txt.gz",
+        ]
+    ),
+    "2016_PostVFP_NOJESunc": jet_factory_factory(
+        files=[
+            "Summer19UL16_V7_MC_L1FastJet_AK4PFchs.jec.txt.gz",
+            "Summer19UL16_V7_MC_L2Relative_AK4PFchs.jec.txt.gz",
+            "Summer20UL16_JRV3_MC_PtResolution_AK4PFchs.jr.txt.gz",
+            "Summer20UL16_JRV3_MC_SF_AK4PFchs.jersf.txt.gz",
         ]
     ),
     "2017": jet_factory_factory(
@@ -133,6 +166,14 @@ fatjet_factory = {
             "Summer19UL16APV_V7_MC_Uncertainty_AK8PFPuppi.junc.txt.gz",
         ]
     ),
+    "2016_PreVFP_NOJESunc": jet_factory_factory(
+        files=[
+            "Summer19UL16APV_V7_MC_L1FastJet_AK8PFPuppi.jec.txt.gz",
+            "Summer19UL16APV_V7_MC_L2Relative_AK8PFPuppi.jec.txt.gz",
+            "Summer20UL16APV_JRV3_MC_PtResolution_AK8PFPuppi.jr.txt.gz",
+            "Summer20UL16APV_JRV3_MC_SF_AK8PFPuppi.jersf.txt.gz",
+        ]
+    ),
     "2016_PostVFP": jet_factory_factory(
         files=[
             "Summer19UL16_V7_MC_L1FastJet_AK8PFPuppi.jec.txt.gz",
@@ -148,6 +189,14 @@ fatjet_factory = {
             "Summer19UL16_V7_MC_L1FastJet_AK8PFPuppi.jec.txt.gz",
             "Summer19UL16_V7_MC_L2Relative_AK8PFPuppi.jec.txt.gz",
             "Summer19UL16_V7_MC_Uncertainty_AK8PFPuppi.junc.txt.gz",
+        ]
+    ),
+    "2016_PostVFP_NOJESunc": jet_factory_factory(
+        files=[
+            "Summer19UL16_V7_MC_L1FastJet_AK8PFPuppi.jec.txt.gz",
+            "Summer19UL16_V7_MC_L2Relative_AK8PFPuppi.jec.txt.gz",
+            "Summer20UL16_JRV3_MC_PtResolution_AK8PFPuppi.jr.txt.gz",
+            "Summer20UL16_JRV3_MC_SF_AK8PFPuppi.jersf.txt.gz",
         ]
     ),
     "2017": jet_factory_factory(
