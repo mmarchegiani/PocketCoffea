@@ -399,7 +399,6 @@ class HistManager:
                             # save the data structure for weights propagation
                             if not has_data_structure:
                                 data_structure = ak.ones_like(masked_data)
-                                had_data_structure = True
                             # flatten the data in one dimension
                             masked_data = ak.flatten(masked_data)
 
@@ -454,10 +453,15 @@ class HistManager:
                                     data_structure,
                                 )
                                 if custom_weight != None and name in custom_weight :
+                                    if variation in custom_weight[name]:
+                                        cweight = custom_weight[name][variation]
+                                    else:
+                                        cweight = custom_weight[name]["nominal"]
                                     weight_varied = weight_varied * mask_and_broadcast_weight(
                                         category + "customW",
-                                        subsample,  variation,
-                                        custom_weight[name], # passing the custom weight to be masked and broadcasted
+                                        subsample,
+                                        variation,
+                                        cweight, # passing the custom weight to be masked and broadcasted
                                         mask,
                                         data_structure,
                                     )
