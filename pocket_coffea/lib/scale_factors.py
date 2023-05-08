@@ -12,7 +12,7 @@ from ..parameters.lepton_scale_factors import (
     electronJSONfiles,
     muonJSONfiles,
 )
-from ..parameters.jet_scale_factors import btagSF, btagSF_calibration, jet_puId
+from ..parameters.jet_scale_factors import btagSF, btagSF_calibration, jet_puId, ptetatau21_reweighting
 from ..parameters.object_preselection import object_preselection
 
 
@@ -370,3 +370,23 @@ def sf_L1prefiring(events):
     L1PreFiringWeight = events.L1PreFiringWeight
 
     return L1PreFiringWeight['Nom'], L1PreFiringWeight['Up'], L1PreFiringWeight['Dn']
+
+def sf_ptetatau21_reweighting(events, year):
+    '''Correction of jets observable by a 3D reweighting based on (pT, eta, tau21).
+    The function returns the nominal, up and down weights, where the up/down variations are computed considering the statistical uncertainty on data and MC.'''
+    cset = correctionlib.CorrectionSet.from_file(ptetatau21_reweighting[year])
+    corr = cset[f"FatJetGoodNMuon1_pt_eta_tau21_corr_{year}"]
+
+    cat = "inclusive"
+    nfatjet  = ak.num(events.FatJetGood.pt)
+    pos = ak.flatten(ak.local_index(events.FatJetGood.pt))
+    pt = ak.flatten(events.FatJetGood.pt)
+    eta = ak.flatten(events.FatJetGood.eta)
+    tau21 = ak.flatten(events.FatJetGood.tau21)
+
+    weight = {}
+    for var in ["nominal", "statUp", "statDown"]:
+        w = corr.evaluate(cat, var, pos, pt, eta, tau21)
+        weight[var] = ak.unflatten(w, nfatjet)
+
+    return weight["nominal"], weight["statUp"], weight["statDown"]
