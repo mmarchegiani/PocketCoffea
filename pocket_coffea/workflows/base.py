@@ -64,7 +64,7 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
         self.custom_axes = []
         self.custom_histogram_fields = {}
 
-        # Custo weights for the histograms
+        # Custom weights for the histograms
         self.custom_histogram_weights = {}
 
         # Output format
@@ -151,8 +151,11 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
         if not self._isMC:
             flags += event_flags_data[self._year]
         for flag in flags:
-            mask_flags = getattr(self.events.Flag, flag)
-            self._skim_masks.add("event_flags", mask_flags)
+            mask_flags &= getattr(self.events.Flag, flag).to_numpy()
+        self._skim_masks.add("event_flags", mask_flags)
+
+        #print("Number of stored masks =", len(self._skim_masks.names))
+        #print("stored masks =", self._skim_masks.names)
 
         # Primary vertex requirement
         self._skim_masks.add("PVgood", self.events.PV.npvsGood > 0)
@@ -533,32 +536,32 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
 
         if hasJES | hasJER:
             # correct the jets only once
-            jec4_cache = cachetools.Cache(np.inf)
+            #jec4_cache = cachetools.Cache(np.inf)
             jec8_cache = cachetools.Cache(np.inf)
-            jets_with_JES = jet_correction(
+            #jets_with_JES = jet_correction(
+            #    nominal_events,
+            #    nominal_events.Jet,
+            #    "AK4PFchs",
+            #    self._year,
+            #    jec4_cache,
+            #    applyJER=hasJER,
+            #    applyJESunc=hasJES,
+            #)
+            fatjets_with_JES = jet_correction(
                 nominal_events,
-                nominal_events.Jet,
-                "AK4PFchs",
+                nominal_events.FatJet,
+                "AK8PFPuppi",
                 self._year,
-                jec4_cache,
+                jec8_cache,
                 applyJER=hasJER,
                 applyJESunc=hasJES,
-            )
-            # fatjets_with_JES = jet_correction(
-            #     nominal_events,
-            #     nominal_events.FatJet,
-            #     "AK8PFPuppi",
-            #     self._year,
-            #     jec8_cache,
-            #     applyJER=hasJER,
-            #     applyJESunc=hasJES,
-            # )
+             )
             #met_with_JES = met_correction(
             #    nominal_events.MET,
             #    jets_with_JES
             #)
         else:
-            jets_with_JES = nominal_events.Jet
+            #jets_with_JES = nominal_events.Jet
             fatjets_with_JES = nominal_events.FatJet
             #met_with_JES = nominal_events.MET
 
@@ -570,21 +573,21 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
                 self.events = nominal_events
                 if hasJES | hasJER:
                     # put nominal shape
-                    self.events["Jet"] = jets_with_JES
-                    # self.events["FatJet"] = fatjets_with_JES
+                    #self.events["Jet"] = jets_with_JES
+                    self.events["FatJet"] = fatjets_with_JES
                     #self.events["MET"] = met_with_JES
                 # Nominal is ASSUMED to be the first
                 yield "nominal"
             elif ("JES" in variation) | ("JER" in variation):
                 # JES_jes is the total. JES_[type] is for different variations
                 self.events = nominal_events
-                self.events["Jet"] = jets_with_JES[variation].up
-                # self.events["FatJet"] = fatjets_with_JES[variation].up
+                #self.events["Jet"] = jets_with_JES[variation].up
+                self.events["FatJet"] = fatjets_with_JES[variation].up
                 yield variation + "Up"
                 # restore nominal before going to down
                 self.events = nominal_events
-                self.events["Jet"] = jets_with_JES[variation].down
-                # self.events["FatJet"] = fatjets_with_JES[variation].down
+                #self.events["Jet"] = jets_with_JES[variation].down
+                self.events["FatJet"] = fatjets_with_JES[variation].down
                 yield variation + "Down"
 
     def process(self, events: ak.Array):
