@@ -371,22 +371,16 @@ def sf_L1prefiring(events):
 
     return L1PreFiringWeight['Nom'], L1PreFiringWeight['Up'], L1PreFiringWeight['Dn']
 
-def sf_ptetatau21_reweighting(events, year):
-    '''Correction of jets observable by a 3D reweighting based on (pT, eta, tau21).
-    The function returns the nominal, up and down weights, where the up/down variations are computed considering the statistical uncertainty on data and MC.'''
-    cset = correctionlib.CorrectionSet.from_file(ptetatau21_reweighting[year])
-    corr = cset[f"FatJetGoodNMuon1_pt_eta_tau21_corr_{year}"]
+def sf_ptetatau21_reweighting(events):
+    '''IMPORTANT: BEWARE OF THE HACK!!
+    This function is a place holder to implement the 3D reweighting with custom weights.
+    The user has to include the variation `sf_ptetatau21_reweighting` in the weights and variations config
+    so that an array filled with ones is passed as per-event weight corresponding to the variations:
+    - `nominal`
+    - `sf_ptetatau21_reweightingUp`
+    - `sf_ptetatau21_reweightingDown`
+    The actual 3D weights are then passed as multidimensional custom_weight
+    '''
+    dummy_weight = ak.ones_like(events.event, dtype=float)
 
-    cat = "inclusive"
-    nfatjet  = ak.num(events.FatJetGood.pt)
-    pos = ak.flatten(ak.local_index(events.FatJetGood.pt))
-    pt = ak.flatten(events.FatJetGood.pt)
-    eta = ak.flatten(events.FatJetGood.eta)
-    tau21 = ak.flatten(events.FatJetGood.tau21)
-
-    weight = {}
-    for var in ["nominal", "statUp", "statDown"]:
-        w = corr.evaluate(cat, var, pos, pt, eta, tau21)
-        weight[var] = ak.unflatten(w, nfatjet)
-
-    return weight["nominal"], weight["statUp"], weight["statDown"]
+    return 3*[dummy_weight]

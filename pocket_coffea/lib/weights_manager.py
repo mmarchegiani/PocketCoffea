@@ -354,7 +354,7 @@ class WeightsManager:
         elif weight_name == 'sf_L1prefiring':
             return [('sf_L1prefiring', *sf_L1prefiring(events))]
         elif weight_name == 'sf_ptetatau21_reweighting':
-            return [('sf_ptetatau21_reweighting', *sf_ptetatau21_reweighting(events, self._year))]
+            return [('sf_ptetatau21_reweighting', *sf_ptetatau21_reweighting(events))]
 
     def add_weight(self, name, nominal, up=None, down=None, category=None):
         '''
