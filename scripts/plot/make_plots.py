@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import argparse
+import importlib
 
 import numpy as np
 
@@ -12,9 +13,9 @@ from coffea.util import load
 
 from multiprocessing import Pool
 
+import pocket_coffea
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.utils.plot_utils import PlotManager
-from pocket_coffea.parameters.plotting import style_cfg
 
 def slice_accumulator(accumulator, entrystart, entrystop):
     '''Returns an accumulator containing only a reduced set of histograms, i.e. those between the positions `entrystart` and `entrystop`.'''
@@ -28,6 +29,7 @@ def slice_accumulator(accumulator, entrystart, entrystop):
 
 parser = argparse.ArgumentParser(description='Plot histograms from coffea file')
 parser.add_argument('--cfg', default=os.getcwd() + "/config/test.json", help='Config file with parameters specific to the current run', required=False)
+parser.add_argument('--style_cfg', default=pocket_coffea.__path__[0] + "/parameters/plotting.py", help='File with plotting style configuration', required=False)
 parser.add_argument("-i", "--inputfile", required=True, type=str, help="Input file")
 parser.add_argument('--plot_dir', default=None, help='Sub-directory inside the plots folder to save plots', required=False)
 parser.add_argument('-v', '--version', type=str, default=None, help='Version of output (e.g. `v01`, `v02`, etc.)')
@@ -64,6 +66,10 @@ if not args.overwrite:
 if not os.path.exists(config.plots):
     os.makedirs(config.plots)
 
+spec = importlib.util.spec_from_file_location("style_cfg", args.style_cfg)
+cfg = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(cfg)
+style_cfg = cfg.style_cfg
 
 def make_plots(entrystart, entrystop):
     '''Function that instantiates multiple PlotManager objects each managing a different subset of histograms.'''

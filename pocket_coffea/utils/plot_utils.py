@@ -25,11 +25,14 @@ class Style:
             setattr(self, key, item)
         self.has_labels = False
         self.has_samples_map = False
+        self.has_excluded_samples = False
         self.has_lumi = False
         if "labels" in style_cfg:
             self.has_labels = True
         if "samples_map" in style_cfg:
             self.has_samples_map = True
+        if "samples_exclude" in style_cfg:
+            self.has_excluded_samples = True
         if "lumi_processed" in style_cfg:
             self.has_lumi = True
         self.set_defaults()
@@ -183,17 +186,19 @@ class Shape:
 
     def group_samples(self):
         '''Groups samples according to the dictionary self.style.samples_map'''
-        if not self.style.has_samples_map:
-            return
-        h_dict_grouped = {}
-        samples_in_map = []
-        for sample_new, samples_list in self.style.samples_map.items():
-            h_dict_grouped[sample_new] = self._stack_sum(stack=hist.Stack.from_dict({s : h for s, h in self.h_dict.items() if s in samples_list}))
-            samples_in_map += samples_list
-        for s, h in self.h_dict.items():
-            if s not in samples_in_map:
-                h_dict_grouped[s] = h
-        self.h_dict = deepcopy(h_dict_grouped)
+        if self.style.has_samples_map:
+            h_dict_grouped = {}
+            samples_in_map = []
+            for sample_new, samples_list in self.style.samples_map.items():
+                h_dict_grouped[sample_new] = self._stack_sum(stack=hist.Stack.from_dict({s : h for s, h in self.h_dict.items() if s in samples_list}))
+                samples_in_map += samples_list
+            excluded_samples = []
+            if self.style.has_excluded_samples:
+                excluded_samples = self.style.samples_exclude
+            for s, h in self.h_dict.items():
+                if (s not in samples_in_map) & (s not in excluded_samples):
+                    h_dict_grouped[s] = h
+            self.h_dict = deepcopy(h_dict_grouped)
 
     def load_attributes(self):
         '''Loads the attributes from the dictionary of histograms.'''
@@ -283,6 +288,7 @@ class Shape:
             hep.cms.text("Simulation Preliminary", fontsize=self.style.fontsize, loc=0, ax=self.ax)
         if year:
             if not self.is_mc_only:
+                hep.cms.text("Preliminary", fontsize=self.style.fontsize, loc=0, ax=self.ax)
                 hep.cms.lumitext(text=f'{self.lumi[year]}' + r' fb$^{-1}$, 13 TeV,' + f' {year}', fontsize=self.style.fontsize, ax=self.ax)
             else:
                 hep.cms.lumitext(text=f'{year}', fontsize=self.style.fontsize, ax=self.ax)
