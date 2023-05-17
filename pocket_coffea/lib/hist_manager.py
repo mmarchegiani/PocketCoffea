@@ -493,14 +493,15 @@ class HistManager:
                                 data_structure,
                             )
                             if custom_weight != None and name in custom_weight :
-                                    weight_varied = weight_varied * mask_and_broadcast_weight(
-                                        category + "customW",
-                                        subsample,
-                                        "nominal",
-                                        custom_weight[name], # passing the custom weight to be masked and broadcasted
-                                        mask,
-                                        data_structure,
-                                    )
+                                cweight = custom_weight[name]["nominal"]
+                                weights_nom = weights_nom * mask_and_broadcast_weight(
+                                    category + "customW",
+                                    subsample,
+                                    "nominal",
+                                    cweight, # passing the custom weight to be masked and broadcasted
+                                    mask,
+                                    data_structure,
+                                )
                             # Then we apply the notnone mask
                             weights_nom = weights_nom[all_axes_isnotnone]
                             # Fill the histogram
