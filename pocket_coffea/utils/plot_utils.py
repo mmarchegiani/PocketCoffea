@@ -57,14 +57,14 @@ class PlotManager:
         for name, h_dict in hist_cfg.items():
             self.shape_objects[name] = Shape(h_dict, name, plot_dir, only_cat=self.only_cat, style_cfg=style_cfg, data_key=self.data_key, log=self.log, density=self.density)
 
-    def plot_datamc_all(self, syst=True, spliteras=False):
+    def plot_datamc_all(self, syst=True, split_syst=False, spliteras=False):
         '''Plots all the histograms contained in the dictionary, for all years and categories.'''
         for name, datamc in self.shape_objects.items():
             if ((datamc.is_mc_only) | (datamc.is_data_only)):
                 ratio = False
             else:
                 ratio = True
-            datamc.plot_datamc_all(ratio, syst, spliteras, save=self.save)
+            datamc.plot_datamc_all(ratio, syst, split_syst=split_syst, spliteras=spliteras, save=self.save)
 
 
 class Shape:
@@ -369,7 +369,7 @@ class Shape:
         self.rax.errorbar(self.xcenters, self.ratio, yerr=self.ratio_unc, **self.style.opts_data)
         self.format_figure(ratio=True)
 
-    def plot_systematic_uncertainty(self, ratio=False, ax=None):
+    def plot_systematic_uncertainty(self, ratio=False, split_syst=False, ax=None):
         '''Plots the asymmetric systematic uncertainty band on top of the MC stack, if `ratio` is set to False.
         To plot the systematic uncertainty in a ratio plot, `ratio` has to be set to True and the uncertainty band will be plotted around 1 in the ratio plot.'''
         ax = self.ax
@@ -391,8 +391,25 @@ class Shape:
         )
         if ratio:
             ax.hlines(1.0, *ak.Array(self.xedges)[[0,-1]], colors='gray', linestyles='dashed')
+        if split_syst & ratio:
+            color = iter(cm.Set1(range(len(self.syst_manager.syst_dict.keys()))))
+            # Assign random colors to each systematic uncertainty
+            self.syst_colors = {s : next(color) for s in self.syst_manager.syst_dict.keys()}
+            for syst_name, syst in self.syst_manager.syst_dict.items():
+                c = self.syst_colors[syst_name]
+                up = syst.ratio_up
+                down = syst.ratio_down
+                linesUp = ax.errorbar(self.xcenters, up, yerr=0, xerr=0.5*self.xbinwidth, label=f"{syst_name}Up", **self.style.opts_unc['Up'], fmt='none', color=c)
+                linesDown = ax.errorbar(self.xcenters, down, yerr=0, xerr=0.5*self.xbinwidth, label=f"{syst_name}Down", **self.style.opts_unc['Down'], fmt='none', color=c)
+                for lines in [linesDown, linesUp]:
+                    errorbar_y = lines[-1][1]
+                    errorbar_y.set_linewidth(0)
+            if ratio:
+                ax.legend(fontsize=self.style.fontsize_legend_ratio, ncols=2)
+            else:
+                ax.legend(fontsize=self.style.fontsize, ncols=2)
 
-    def plot_datamc(self, year=None, ratio=True, syst=True, ax=None, rax=None):
+    def plot_datamc(self, year=None, ratio=True, syst=True, split_syst=False, ax=None, rax=None):
         '''Plots the data histogram as an errorbar plot on top of the MC stacked histograms.
         If ratio is True, also the Data/MC ratio plot is plotted.
         If syst is True, also the total systematic uncertainty is plotted.'''
@@ -410,22 +427,22 @@ class Shape:
             self.plot_mc()
             self.plot_data()
             if syst:
-                self.plot_systematic_uncertainty()
+                self.plot_systematic_uncertainty(split_syst=split_syst)
         elif self.is_mc_only:
             self.plot_mc()
             if syst:
-                self.plot_systematic_uncertainty()
+                self.plot_systematic_uncertainty(split_syst=split_syst)
         elif self.is_data_only:
             self.plot_data()
 
         if ratio:
             self.plot_datamc_ratio()
             if syst:
-                self.plot_systematic_uncertainty(ratio)
+                self.plot_systematic_uncertainty(ratio=True, split_syst=split_syst)
 
         self.format_figure(ratio)
 
-    def plot_datamc_all(self, ratio=True, syst=True, spliteras=False, save=True):
+    def plot_datamc_all(self, ratio=True, syst=True, split_syst=False, spliteras=False, save=True):
         '''Plots the data and MC histograms for each year and category contained in the histograms.
         If ratio is True, also the Data/MC ratio plot is plotted.
         If syst is True, also the total systematic uncertainty is plotted.'''
@@ -436,7 +453,7 @@ class Shape:
                 self.define_figure(year, ratio)
                 self.build_stacks(year, cat, spliteras)
                 self.get_systematic_uncertainty()
-                self.plot_datamc(year, ratio, syst)
+                self.plot_datamc(year, ratio, syst, split_syst)
                 if save:
                     plot_dir = os.path.join(self.plot_dir, cat)
                     if self.log:
@@ -567,7 +584,7 @@ class SystUnc:
                 assert all(np.equal(self.nominal, syst.nominal)), "Attempting to sum systematic uncertainties with different nominal MC."
                 assert all(np.equal(self.xcenters, syst.xcenters)), "Attempting to sum systematic uncertainties with different bin centers."
             self.err2_up += syst.err2_up
-            self.err2_down += syst.err2_up
+            self.err2_down += syst.err2_down
 
     def _get_err2(self):
         '''Method used in the constructor to instanstiate a SystUnc object from
