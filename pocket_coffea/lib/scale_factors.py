@@ -384,3 +384,25 @@ def sf_ptetatau21_reweighting(events):
     dummy_weight = ak.ones_like(events.event, dtype=float)
 
     return 3*[dummy_weight]
+
+def psWeight_isr(events):
+    '''Up and down variations for the ISR parton shower weights.
+    In order to properly store the weights, a dummy weight of 1 is stored
+    as central value for the ISR correction.
+    '''
+    isr_up = events.PSWeight[:,2]
+    isr_down = events.PSWeight[:,0]
+    nom = ak.ones_like(isr_up)
+
+    return nom, isr_up, isr_down
+
+def psWeight_fsr(events):
+    '''Up and down variations for the FSR parton shower weights.
+    In order to properly store the weights, a dummy weight of 1 is stored
+    as central value for the FSR correction.
+    '''
+    fsr_up = events.PSWeight[:,3]
+    fsr_down = events.PSWeight[:,1]
+    nom = ak.ones_like(fsr_up)
+
+    return nom, fsr_up, fsr_down
