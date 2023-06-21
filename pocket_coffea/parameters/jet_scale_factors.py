@@ -32,24 +32,56 @@ jet_puId = {
 }
 
 ptetatau21_reweighting = {
-    '2016_PreVFP': path.join(
-        path.dirname(__file__),
-        "ptetatau21_reweighting",
-        "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2016_PreVFP_reweighting.json",
-    ),
-    '2016_PostVFP': path.join(
-        path.dirname(__file__),
-        "ptetatau21_reweighting",
-        "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2016_PostVFP_reweighting.json",
-    ),
-    '2017': path.join(
-        path.dirname(__file__),
-        "ptetatau21_reweighting",
-        "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2017_reweighting.json",
-    ),
-    '2018': path.join(
-        path.dirname(__file__),
-        "ptetatau21_reweighting",
-        "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2018_reweighting.json",
-    ),
+    'QCD_MuEnriched' : {
+        '2016_PreVFP': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_MuEnriched",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2016_PreVFP_reweighting.json",
+        ),
+        '2016_PostVFP': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_MuEnriched",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2016_PostVFP_reweighting.json",
+        ),
+        '2017': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_MuEnriched",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2017_reweighting.json",
+        ),
+        '2018': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_MuEnriched",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2018_reweighting.json",
+        ),
+    },
+    'QCD_HT' : {
+        '2016_PreVFP': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_HT",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2016_PreVFP_reweighting.json",
+        ),
+        '2016_PostVFP': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_HT",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2016_PostVFP_reweighting.json",
+        ),
+        '2017': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_HT",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2017_reweighting.json",
+        ),
+        '2018': path.join(
+            path.dirname(__file__),
+            "ptetatau21_reweighting",
+            "QCD_HT",
+            "FatJetGoodNMuon1_pt_eta_tau21_bintau05_2018_reweighting.json",
+        ),
+    }
 }
