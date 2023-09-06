@@ -111,6 +111,8 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
         if self._isMC:
             self._era = "MC"
             self._xsec = self.events.metadata["xsec"]
+            if "part" in self.events.metadata:
+                self._part = self.events.metadata["part"]
             if "sum_genweights" in self.events.metadata:
                 self._sum_genweights = self.events.metadata["sum_genweights"]
             else:
