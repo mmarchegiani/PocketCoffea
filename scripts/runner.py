@@ -333,6 +333,17 @@ if __name__ == '__main__':
                 for sample, files in config.fileset.items():
                     logging.info(f"Working on sample: {sample}")
                     fileset = {sample:files}
+
+                    n_events_tot = int(files["metadata"]["nevents"])
+                    n_workers_max = n_events_tot / run_options["chunksize"]
+
+                    # If the number of available workers exceeds the maximum number of workers for a given sample,
+                    # the chunksize is reduced so that all the workers are used to process the given sample
+                    if (config.run_options["scaleout"] > n_workers_max):
+                        adapted_chunksize = int(n_events_tot / config.run_options["scaleout"])
+                        logging.info(f"Reducing chunksize from {config.run_options['chunk']} to {adapted_chunksize} for sample {sample}")
+                    else:
+                        adapted_chunksize = config.run_options["chunksize"]
                     
                     output = processor.run_uproot_job(fileset,
                                             treename='Events',
@@ -345,7 +356,7 @@ if __name__ == '__main__':
                                                 'retries' : config.run_options['retries'],
                                                 'treereduction' : config.run_options.get('treereduction', 20)
                                             },
-                                            chunksize=config.run_options['chunk'],
+                                            chunksize=adapted_chunksize,
                                             maxchunks=config.run_options['max']
                                 )
                     print(f"Saving output to {config.outfile.replace('{dataset}', sample)}")
