@@ -206,7 +206,7 @@ our Drell-Yan and SingleMuon datasets should be the following:
 # if you are using singularity, create the ticket outside of it.
 voms-proxy-init -voms cms -rfc --valid 168:0
 
-pocket-coffea build-dataset --cfg datasets/dataset_definitions.json -o
+pocket-coffea build-datasets --cfg datasets/datasets_definitions.json -o
 
 # if you are running at CERN it is useful to restrict the data sources to Tiers closer to CERN
 pocket-coffea build-datasets --cfg datasets/datasets_definitions.json -o -rs 'T[123]_(FR|IT|BE|CH|DE)_\w+'
