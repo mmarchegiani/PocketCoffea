@@ -36,6 +36,18 @@ CMAP_10 = [
     "#92dadd",
 ]
 
+COLOR_ALIASES = {
+    "CMS_blue": CMAP_10[0],        # Blue
+    "CMS_orange": CMAP_10[1],      # Orange
+    "CMS_red": CMAP_10[2],         # Red
+    "CMS_gray": CMAP_10[3],        # Gray
+    "CMS_purple": CMAP_10[4],      # Purple
+    "CMS_brown": CMAP_10[5],       # Brown
+    "CMS_dark_orange": CMAP_10[6], # Dark Orange
+    "CMS_beige": CMAP_10[7],       # Beige
+    "CMS_dark_gray": CMAP_10[8],   # Dark Gray
+    "CMS_light_blue": CMAP_10[9]   # Light Blue
+}
 
 class Style:
     '''This class manages all the style options for Data/MC plots.'''
@@ -62,6 +74,19 @@ class Style:
         self.has_rescale_samples=False
         if "rescale_samples" in style_cfg:
             self.has_rescale_samples = True
+        if "colors_mc" in style_cfg:
+            self.has_colors_mc = True
+
+        self.has_blind_hists = False
+        if "blind_hists" in style_cfg:
+            if 'categories' in style_cfg["blind_hists"] and 'histograms' in style_cfg["blind_hists"]:
+                if len(style_cfg["blind_hists"]["categories"])!=0 and len(style_cfg["blind_hists"]["histograms"])!=0:
+                    self.has_blind_hists = True
+
+        self.has_signal_samples = []
+        if "signal_samples" in self.style_cfg:
+            self.has_signal_samples = True
+
         self.set_defaults()
 
         #print("Style config:\n", style_cfg)
@@ -545,16 +570,25 @@ class Shape:
                 # order colors accordingly
                 self.colors = {sample: self.colors[sample] for sample in self.nevents}
 
-                if hasattr(self.style, "colors_mc"):
+                if self.style.has_colors_mc:
                     # Initialize random colors
                     for d in self.nevents:
                         # If the color for a corresponding sample exists in the dictionary, assign the color to the sample
                         if d in self.style.colors_mc:
-                            self.colors[d] = self.style.colors_mc[d]
-                # once the colors are setup, we can convert it to a list
-                # (to be used in hist.plot)
-                self.colors = list(self.colors.values())
-                
+                            color_custom = self.style.colors_mc[d]
+                            # Check if the color is an alias
+                            if color_custom in COLOR_ALIASES:
+                                color_custom = COLOR_ALIASES[color_custom]
+                            else:
+                                try:
+                                    # Check if the color is a valid color
+                                    matplotlib.colors.to_rgba(color_custom)
+                                except ValueError:
+                                    raise ValueError(
+                                        f"Invalid color `{color_custom}` for sample `{d}`. Available aliases: {list(COLOR_ALIASES.keys())}"
+                                    )
+                            self.colors[d] = color_custom
+
                 # Order the MC dictionary by number of events
                 h_dict_mc = {d: h_dict_mc[d] for d in self.nevents.keys()}
                 h_dict_mc_nominal = {

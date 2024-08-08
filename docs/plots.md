@@ -72,5 +72,52 @@ plotting_style:
 
 ```
 
-User can define custom labels for the MC samples and a custom coloring scheme. Additionally, the Data and MC samples can be merged between each other by specifying a dictionary of samples in the `samples_groups` key. In the example above, a single sample `ttbar` will be plotted by merging the samples `TTTo2L2Nu` and `TTToSemiLeptonic`. Certain samples can be excluded from plotting with `exclude_samples` key.
-One could also rescale certain samples by a multiplicative factor, using the `rescale_samples` keys.
+With `labels_mc` and `colors_mc` settings the user can define custom
+labels for the MC samples and a custom coloring scheme.  
+
+The `samples_groups` option allows for MC sub-samples to be merged
+into a common sample by specifying a dictionary of those sub-samples.
+In the example above, a single sample `ttbar` will be plotted by
+merging the samples `TTTo2L2Nu` and `TTToSemiLeptonic`.  
+
+Certain samples can be excluded from plotting with `exclude_samples` key.  
+
+One could also rescale certain samples by a multiplicative factor,
+using the `rescale_samples` keys.  
+
+The `blind_hists` would remove points from `data` distributions in a
+given range (set those bins to zero). One needs to specify a list of
+categories where blinding should be implemented and the names of the histograms, as
+shown in the example above.
+
+With the `signal_samples` options one can define a list of samples
+that are considered signals.  Then these samples would be also drawn
+as a separate histogram (in addiotion to the stack MC hist). The
+histogram is rescaled by the number specified.  
+
+The `print_info` options would print a text on the plots for category
+name and the year (era period).
+
+## Default color scheme
+
+The default color scheme adopted for plotting is the one recommended by
+the [CMS guidelines](https://cms-analysis.docs.cern.ch/guidelines/plotting/colors/#categorical-data-eg-1d-stackplots).
+Two color schemes with 6 and 10 colors respectively are used depending on the number of samples.
+
+A set of user-friendly aliases is defined such that the user can use the colors recommended
+by CMS just by an alias string, with no need to know the hexadecimal color codes.
+The aliases are indicated in the figure below on top of the corresponding color:
+
+![](./images/color_scheme.png)
+
+Usage in the `.yaml` config file:
+```
+plotting_style:
+
+    colors_mc:
+        TTTo2L2Nu: CMS_red
+        TTToSemiLeptonic: CMS_blue
+```
+
+If no alias or default `matplotlib` color corresponds to the string specified by the user,
+an exception is raised.
