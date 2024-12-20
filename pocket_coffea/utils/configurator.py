@@ -415,6 +415,8 @@ class Configurator:
                     print(
                         f"[WARNING] Requested missing sample or subsample {sample} in the weights configuration"
                     )
+                    print(f"Available samples: {self.samples}")
+                    print(f"Available subsamples: {self.subsamples_list}")
                     continue
                     #raise Exception("Wrong weight configuration") #just a warning --> samples can be filtered
                 if is_subsample:
