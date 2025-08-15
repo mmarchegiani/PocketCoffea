@@ -240,10 +240,11 @@ Some basic commands:
     def generate_default_metadata(self, dataset):
         year = self.extract_year_from_dataset_name(dataset)
         isMC = self.is_mc_dataset(dataset)
-        try:
-            xsec = self.extract_xsec_from_dataset_name(dataset)
-        except Exception as e:
-            xsec = 1.0
+        xsec = self.extract_xsec_from_dataset_name(dataset)
+        #try:
+        #    xsec = self.extract_xsec_from_dataset_name(dataset)
+        #except Exception as e:
+        #    xsec = 1.0
         primary_dataset,year_data,era_data = self.extract_era_from_dataset_name(dataset)
         if isMC == True:
             return {
