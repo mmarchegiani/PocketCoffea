@@ -1,70 +1,15 @@
+# Object preselection for Delphes objects (fields of the coffea DelphesSchema)
 object_preselection:
   Muon:
     pt: 15.0
     eta: 2.4
-    # isoFlag: 4 
-    iso: 0.4
-    sip3d: 8.0
-    dxy: 0.05
-    dz: 0.1
-    base_id: tightId #mediumId
-    id:
-      2022_preEE: mvaTTH_redo 
-      2022_postEE: mvaTTH_redo
-      2023_preBPix: mvaTTH_redo
-      2023_postBPix: mvaTTH_redo
-      "2024": promptMVA
-      "2025": promptMVA
-    mva_wp:
-      2022_preEE: 0.64
-      2022_postEE: 0.64
-      2023_preBPix: 0.64  
-      2023_postBPix: 0.64
-      "2024": 0.64
-      "2025": 0.64
-    #btag_cut:
-    #  2022_preEE: 0.3086
-    #  2022_postEE: 0.3196
-    #  2023_preBPix: 0.2431
-    #  2023_postBPix: 0.2435 
-    #  "2024": 999.
-    #  "2025": 999.
-
+    iso: 0.25   # Delphes IsolationVar (relative isolation)
   Electron:
     pt: 15.0
-    eta: 2.5 
-    iso: 0.4  #only used for mvaTTH 
-    sip3d: 8.0  #only used for mvaTTH
-    lostHits: 1  #only used for mvaTTH
-    dxy: 0.05  #only used for mvaTTH
-    dz: 0.1    #only used for mvaTTH
-    veto_wp: 1 # passing veto cutbased ID 
-    id:
-      2022_preEE: mvaTTH_redo 
-      2022_postEE: mvaTTH_redo
-      2023_preBPix: mvaTTH_redo
-      2023_postBPix: mvaTTH_redo
-      '2024': promptMVA
-      "2025": promptMVA
-    mva_wp:
-      2022_preEE: 0.9
-      2022_postEE: 0.9
-      2023_preBPix: 0.9
-      2023_postBPix: 0.9
-      "2024": 0.9 
-      "2025": 0.9
-    #btag_cut:
-    #  2022_preEE: 0.3086
-    #  2022_postEE: 0.3196
-    #  2023_preBPix: 0.2431
-    #  2023_postBPix: 0.2435 
-    #  "2024": 999.
-    #  "2025": 999.
-
+    eta: 2.5
+    iso: 0.25   # Delphes IsolationVar (relative isolation)
   Jet:
-    dr_lepton: 0.4
     pt: 25.0
     eta: 2.5
-    jetId: 6 #tight:2; tightlepVeto:6
-    btag: 
-      wp: M
+    dr_lepton: 0.4
+    btag_bit: 0   # bit of Jet.BTag to use (bit 0 = default working point of the Delphes card)

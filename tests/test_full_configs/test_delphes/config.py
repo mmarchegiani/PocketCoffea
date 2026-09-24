@@ -2,6 +2,7 @@
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.cut_definition import Cut
 from pocket_coffea.lib.cut_functions import get_nObj_min, get_HLTsel
+from pocket_coffea.lib.weights.common.common import genWeight, lumi, XS
 from pocket_coffea.parameters.cuts import passthrough
 from pocket_coffea.parameters.histograms import *
 
@@ -41,31 +42,35 @@ cfg = Configurator(
 
     workflow = DelphesProcessor,
 
+    # Delphes: no object calibrations (the default sequence is NanoAOD/JEC-specific)
+    # and only the generator weight, luminosity and cross section as weights
+    calibrators = [],
+    weights_classes = [genWeight, lumi, XS],
+
     skim = [
 
-    ], 
+    ],
 
     preselections = [semileptonic_presel],
     categories = {
         "baseline": [passthrough],
-        "4j3b": [get_nObj_min("JetGood", 4), get_nObj_min("BJetGood", 3)],
-        "4j4b": [get_nObj_min("JetGood", 4), get_nObj_min("BJetGood", 2)],
-        "5j3b": [get_nObj_min("JetGood", 5), get_nObj_min("BJetGood", 3)],
-        "5j4b": [get_nObj_min("JetGood", 5), get_nObj_min("BJetGood", 4)],
-        "6j3b": [get_nObj_min("JetGood", 6), get_nObj_min("BJetGood", 3)],
-        "6j4b": [get_nObj_min("JetGood", 6), get_nObj_min("BJetGood", 4)],
+        "4j3b": [get_nObj_min(4, coll="JetGood"), get_nObj_min(3, coll="BJetGood")],
+        "4j4b": [get_nObj_min(4, coll="JetGood"), get_nObj_min(4, coll="BJetGood")],
+        "5j3b": [get_nObj_min(5, coll="JetGood"), get_nObj_min(3, coll="BJetGood")],
+        "5j4b": [get_nObj_min(5, coll="JetGood"), get_nObj_min(4, coll="BJetGood")],
+        "6j3b": [get_nObj_min(6, coll="JetGood"), get_nObj_min(3, coll="BJetGood")],
+        "6j4b": [get_nObj_min(6, coll="JetGood"), get_nObj_min(4, coll="BJetGood")],
     },
 
     weights = {
         "common": {
-            "inclusive": ["genWeight","lumi","XS",
-                          "pileup"],
+            "inclusive": ["genWeight","lumi","XS"],
             "bycategory": {
                           },
        },
         "bycategory" : {
                        },
-        
+
         "bysample": {
         }
     },
@@ -85,8 +90,13 @@ cfg = Configurator(
     },
 
     variables = {
-
-
+        # Only fields available in Delphes objects (pt/eta/phi via the schema aliases,
+        # pdgId from the workflow); no tagger scores, no MET.pt
+        **count_hist("JetGood", bins=10, start=0, stop=10),
+        **count_hist("BJetGood", bins=6, start=0, stop=6),
+        **jet_hists(coll="JetGood", pos=0),
+        **lepton_hists(coll="LeptonGood", pos=0),
+        "MissingET": HistConf([Axis(coll="MissingET", field="MET", bins=40, start=0, stop=400, label="MET [GeV]")]),
     },
 
     columns = {
