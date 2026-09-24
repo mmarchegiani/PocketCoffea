@@ -1,0 +1,19 @@
+{
+  "ttphi_c1_1p0_c101_1p0_13p6TeV_mde25_2024": {
+    "treename" : "Delphes",
+    "metadata": {
+      "sample": "ttphi_c1_1p0_c101_1p0_13p6TeV_mde25",
+      "year": "2024",
+      "isMC": "True",
+      "xsec": "0.57742",
+      "nevents": "10000",
+      "part": "mde25",
+      "mde": "25",
+      "process": "ttphi",
+      "treename": "Delphes"
+    },
+    "files": [
+      "/eos/user/m/mmarcheg/dark_energy/samples/ttphi_c1_1p0_c101_1p0_13p6TeV/mde25/delphes/delphes_events.root"
+    ]
+  }
+}
