@@ -15,13 +15,13 @@ from rich.console import Console
 from coffea.util import save
 from coffea import processor
 from coffea.processor import Runner
-from coffea.nanoevents import NanoAODSchema
 
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.utils.utils import load_config, path_import, adapt_chunksize, save_failed_jobs, load_failed_jobs, FAILED_JOBS_FILENAME
 from pocket_coffea.utils.logging import setup_logging, try_and_log_error
 from pocket_coffea.utils.run import get_runner
 from pocket_coffea.utils.time import wait_until
+from pocket_coffea.utils.schema import get_schema, get_treename
 from pocket_coffea.parameters import defaults as parameters_utils
 from pocket_coffea.executors import executors_base, executors_manual_jobs
 from pocket_coffea.utils.benchmarking import print_processing_stats
@@ -308,13 +308,13 @@ def run(cfg,  custom_run_options, outputdir, test, limit_files,
             chunksize=run_options["chunksize"],
             maxchunks=run_options["limit-chunks"],
             skipbadfiles=run_options['skip-bad-files'],
-            schema=NanoAODSchema,
+            schema=get_schema(run_options['schema']),
             format="root",
             error_log_file=f"{outputdir}/error/run_all.err",
             exit_on_error=True
         )
 
-        output = run(filesets_to_run, treename="Events",
+        output = run(filesets_to_run, treename=get_treename(run_options['schema']),
                      processor_instance=config.processor_instance)
         
         print(f"Saving output to {outfile.format('all')}")
@@ -382,13 +382,13 @@ def run(cfg,  custom_run_options, outputdir, test, limit_files,
                 chunksize=run_options["chunksize"],
                 maxchunks=run_options["limit-chunks"],
                 skipbadfiles=run_options['skip-bad-files'],
-                schema=NanoAODSchema,
+                schema=get_schema(run_options['schema']),
                 format="root",
                 error_log_file=f"{outputdir}/error/run_{group_name}.err",
                 exit_on_error=False # Continue to next dataset on error
             )
 
-            output = run(fileset_, treename="Events",
+            output = run(fileset_, treename=get_treename(run_options['schema']),
                          processor_instance=config.processor_instance)
             if output is None:
                 logging.error(f"Processing of dataset {group_name} failed, moving to the next one")
