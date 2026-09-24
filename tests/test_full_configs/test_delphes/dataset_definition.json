@@ -9,8 +9,7 @@
       "nevents": "10000",
       "part": "mde25",
       "mde": "25",
-      "process": "ttphi",
-      "treename": "Delphes"
+      "process": "ttphi"
     },
     "files": [
       "/eos/user/m/mmarcheg/dark_energy/samples/ttphi_c1_1p0_c101_1p0_13p6TeV/mde25/delphes/delphes_events.root"
