@@ -155,11 +155,12 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
                     self.nano_version = 15
                 else:
                     # For MC if it's not defined we take the default nano version
-                    self.nano_version = self.params.default_nano_version[self._year]
+                    # (only meaningful for NanoAOD inputs: None for other formats / unknown years)
+                    self.nano_version = self.params.default_nano_version.get(self._year, None)
 
             else:
                 # For data if it's not defined we take the default nano version
-                self.nano_version = self.params.default_nano_version[self._year]
+                self.nano_version = self.params.default_nano_version.get(self._year, None)
 
         # Store all metadata in a single dict for easier access
         self._metadata = {
@@ -179,6 +180,20 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
         For example load additional information for a specific sample.
         '''
         pass
+
+    def get_genweight(self):
+        '''
+        Per-event generator weight of the current chunk.
+
+        The framework always reads it as `self.events.genWeight` (sum of genweights, skim rescaling,
+        `genWeight`/`signOf_genWeight` weights). NanoAOD provides the branch directly; processors for
+        other input formats (e.g. Delphes) override this method and the result is stored as
+        `self.events["genWeight"]` at the beginning of the processing.
+        '''
+        raise NotImplementedError(
+            f"Events of dataset {self._dataset} have no `genWeight` field: override `get_genweight()` "
+            "in the workflow to define the generator weight for this input format (see DelphesBaseProcessorABC)."
+        )
 
     def skim_events(self):
         '''
@@ -815,6 +830,10 @@ class BaseProcessorABC(processor.ProcessorABC, ABC):
         self.nEvents_initial = self.nevents
         self.output['cutflow']['initial'][self._dataset] = self.nEvents_initial
         if self._isMC:
+            if "genWeight" not in self.events.fields:
+                # Expose the generator weight under the common name used by the framework
+                # (sum of genweights, skim rescaling, `genWeight`/`signOf_genWeight` weights)
+                self.events["genWeight"] = self.get_genweight()
             # This is computed before any preselection
             if not self._isSkim:
                 self.output['sum_genweights'][self._dataset] = np.sum(ak.to_numpy(self.events.genWeight))
