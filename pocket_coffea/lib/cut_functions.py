@@ -12,7 +12,8 @@ def passthrough_f(events, **kargs):
     '''
     Identity cut:  passthrough of all events.
     '''
-    return ak.full_like(events.event, True, dtype=bool)
+    # Not tied to any branch name (e.g. NanoAOD `event`): works for any input format
+    return ak.Array(np.ones(len(events), dtype=bool))
 
 
 ##############################
